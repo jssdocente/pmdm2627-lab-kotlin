@@ -8,14 +8,14 @@ class Cola<T> {
 
     /** Añade [elemento] al final de la cola. */
     fun encolar(elemento: T) {
-        TODO("Pendiente de implementar")
+        elementos.addLast(elemento)
     }
 
     /** Saca y devuelve el primero, o null si la cola está vacía. */
     fun desencolar(): T? =
-        TODO("Pendiente de implementar")
+        elementos.removeFirstOrNull()
 
     /** Devuelve el primero sin sacarlo, o null si la cola está vacía. */
     fun siguiente(): T? =
-        TODO("Pendiente de implementar")
+        elementos.firstOrNull()
 }

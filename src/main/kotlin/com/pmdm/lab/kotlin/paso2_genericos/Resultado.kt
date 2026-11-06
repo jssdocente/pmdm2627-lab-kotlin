@@ -8,8 +8,14 @@ sealed interface Resultado<out T> {
 
 /** Si es Exito, transforma su valor con [transformar]; si es Error, lo devuelve igual. */
 fun <T, R> Resultado<T>.mapear(transformar: (T) -> R): Resultado<R> =
-    TODO("Pendiente de implementar")
+    when (this) {
+        is Resultado.Exito -> Resultado.Exito(transformar(valor))
+        is Resultado.Error -> this
+    }
 
 /** Devuelve el valor si es Exito o [porDefecto] si es Error. */
 fun <T> Resultado<T>.valorO(porDefecto: T): T =
-    TODO("Pendiente de implementar")
+    when (this) {
+        is Resultado.Exito -> valor
+        is Resultado.Error -> porDefecto
+    }

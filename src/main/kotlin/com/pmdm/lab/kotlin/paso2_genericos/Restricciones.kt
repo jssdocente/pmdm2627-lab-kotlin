@@ -7,8 +7,8 @@ interface ConTamano {
 
 /** Devuelve el elemento que más ocupa, o null si la lista está vacía. */
 fun <T : ConTamano> mayor(elementos: List<T>): T? =
-    TODO("Pendiente de implementar")
+    elementos.maxByOrNull { it.tamanoMb }
 
 /** Suma lo que ocupan todos los elementos. */
 fun <T : ConTamano> totalMb(elementos: List<T>): Int =
-    TODO("Pendiente de implementar")
+    elementos.sumOf { it.tamanoMb }
