@@ -14,21 +14,38 @@ import kotlinx.coroutines.withTimeoutOrNull
  * una CancellationException debe volver a lanzarse.
  */
 suspend fun descargaSegura(servidor: Servidor, nombre: String): EstadoDescarga =
-    TODO("Pendiente de implementar")
+    try {
+        EstadoDescarga.Completada(servidor.descargar(nombre))
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Exception) {
+        EstadoDescarga.Fallida(e.message ?: "Error desconocido")
+    }
 
 /**
  * Igual que una descarga normal, pero si tarda más de [limiteMs]
  * devuelve Fallida("Tiempo agotado"). Usa withTimeoutOrNull.
  */
 suspend fun descargaConLimite(servidor: Servidor, nombre: String, limiteMs: Long): EstadoDescarga =
-    TODO("Pendiente de implementar")
+    withTimeoutOrNull(limiteMs) {
+        EstadoDescarga.Completada(servidor.descargar(nombre))
+    } ?: EstadoDescarga.Fallida("Tiempo agotado")
 
 /**
  * Ejecuta [bloque] hasta [veces] veces y devuelve su primer resultado correcto.
  * Si falla la última vez, deja salir la excepción. La cancelación no se reintenta.
  */
 suspend fun <T> conReintentos(veces: Int, bloque: suspend () -> T): T {
-    TODO("Pendiente de implementar")
+    repeat(veces - 1) {
+        try {
+            return bloque()
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            // Se reintenta
+        }
+    }
+    return bloque()
 }
 
 /**
@@ -41,4 +58,12 @@ fun CoroutineScope.iniciarCancelable(
     nombre: String,
     alCambiar: (EstadoDescarga) -> Unit,
 ): Job =
-    TODO("Pendiente de implementar")
+    launch {
+        alCambiar(EstadoDescarga.Descargando(0))
+        try {
+            alCambiar(EstadoDescarga.Completada(servidor.descargar(nombre)))
+        } catch (e: CancellationException) {
+            alCambiar(EstadoDescarga.Fallida("Cancelada"))
+            throw e
+        }
+    }
