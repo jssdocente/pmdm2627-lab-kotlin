@@ -13,36 +13,37 @@ fun nombreEstado(estado: EstadoDescarga): String = when (estado) {
 
 /** Nombres de las descargas completadas, en el mismo orden. */
 fun nombresCompletadas(descargas: List<Descarga>): List<String> =
-    TODO("Pendiente de implementar")
+    descargas.filter { it.estado is EstadoDescarga.Completada }.map { it.nombre }
 
 /** Los nombres de las [n] descargas que más ocupan, de mayor a menor. */
 fun lasMasGrandes(descargas: List<Descarga>, n: Int): List<String> =
-    TODO("Pendiente de implementar")
+    descargas.sortedByDescending { it.tamanoMb }.take(n).map { it.nombre }
 
 /** Un mapa para encontrar cada descarga por su id. */
 fun porId(descargas: List<Descarga>): Map<Int, Descarga> =
-    TODO("Pendiente de implementar")
+    descargas.associateBy { it.id }
 
 /** Las descargas agrupadas por el nombre de su estado. */
 fun agruparPorEstado(descargas: List<Descarga>): Map<String, List<Descarga>> =
-    TODO("Pendiente de implementar")
+    descargas.groupBy { nombreEstado(it.estado) }
 
 /** Cuántas descargas hay en cada estado. */
 fun contarPorEstado(descargas: List<Descarga>): Map<String, Int> =
-    TODO("Pendiente de implementar")
+    descargas.groupingBy { nombreEstado(it.estado) }.eachCount()
 
 /** Cuántos MB suman las descargas de cada estado. */
 fun megasPorEstado(descargas: List<Descarga>): Map<String, Int> =
-    TODO("Pendiente de implementar")
+    agruparPorEstado(descargas).mapValues { (_, lista) -> lista.sumOf { it.tamanoMb } }
 
 /**
  * Devuelve un mapa nuevo con el estado de la descarga [id] cambiado.
  * Si el id no existe, devuelve el mismo mapa. El original no se modifica.
  */
 fun cambiarEstado(mapa: Map<Int, Descarga>, id: Int, nuevo: EstadoDescarga): Map<Int, Descarga> {
-    TODO("Pendiente de implementar")
+    val descarga = mapa[id] ?: return mapa
+    return mapa + (id to descarga.copy(estado = nuevo))
 }
 
 /** Devuelve un mapa nuevo sin la descarga [id]. El original no se modifica. */
 fun quitar(mapa: Map<Int, Descarga>, id: Int): Map<Int, Descarga> =
-    TODO("Pendiente de implementar")
+    mapa - id
