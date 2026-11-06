@@ -13,7 +13,9 @@ import kotlinx.coroutines.launch
  * [nombre], obtiene el enlace con el token, descarga con el enlace y devuelve la ruta.
  */
 suspend fun descargarUna(servidor: Servidor, nombre: String): String {
-    TODO("Pendiente de implementar")
+    val token = servidor.pedirPermiso(nombre)
+    val enlace = servidor.obtenerEnlace(token)
+    return servidor.descargar(enlace)
 }
 
 /**
@@ -21,7 +23,9 @@ suspend fun descargarUna(servidor: Servidor, nombre: String): String {
  * Usa coroutineScope, async y awaitAll.
  */
 suspend fun descargarVarias(servidor: Servidor, nombres: List<String>): List<String> =
-    TODO("Pendiente de implementar")
+    coroutineScope {
+        nombres.map { nombre -> async { descargarUna(servidor, nombre) } }.awaitAll()
+    }
 
 /**
  * Lanza la descarga con launch, sin esperarla, y llama a [alTerminar] con la ruta.
@@ -32,4 +36,4 @@ fun CoroutineScope.descargarEnSegundoPlano(
     nombre: String,
     alTerminar: (String) -> Unit,
 ): Job =
-    TODO("Pendiente de implementar")
+    launch { alTerminar(descargarUna(servidor, nombre)) }
