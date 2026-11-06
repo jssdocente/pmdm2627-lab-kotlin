@@ -11,8 +11,15 @@ import kotlinx.coroutines.flow.map
  * emite el porcentaje. Con 4 pasos emite 25, 50, 75 y 100.
  */
 fun progreso(pasos: Int, retardoMs: Long): Flow<Int> =
-    TODO("Pendiente de implementar")
+    flow {
+        for (paso in 1..pasos) {
+            delay(retardoMs)
+            emit(paso * 100 / pasos)
+        }
+    }
 
 /** Convierte cada porcentaje en Descargando(porcentaje), o en Completada(ruta) al llegar a 100. */
 fun Flow<Int>.comoEstados(ruta: String): Flow<EstadoDescarga> =
-    TODO("Pendiente de implementar")
+    map { porcentaje ->
+        if (porcentaje >= 100) EstadoDescarga.Completada(ruta) else EstadoDescarga.Descargando(porcentaje)
+    }

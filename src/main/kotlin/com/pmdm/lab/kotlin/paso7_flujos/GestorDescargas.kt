@@ -23,12 +23,15 @@ class GestorDescargas(
 
     /** Añade [descarga] al mapa usando su id como clave. Usa update. */
     fun agregar(descarga: Descarga) {
-        TODO("Pendiente de implementar")
+        _descargas.update { it + (descarga.id to descarga) }
     }
 
     /** Cambia el estado de la descarga [id]. Si el id no existe, no hace nada. Usa update. */
     fun cambiarEstado(id: Int, nuevo: EstadoDescarga) {
-        TODO("Pendiente de implementar")
+        _descargas.update { mapa ->
+            val descarga = mapa[id] ?: return@update mapa
+            mapa + (id to descarga.copy(estado = nuevo))
+        }
     }
 
     /**
@@ -37,10 +40,15 @@ class GestorDescargas(
      * valor. Si el id no existe, devuelve un Job sin hacer nada: Job().apply { complete() }.
      */
     fun iniciar(id: Int): Job {
-        TODO("Pendiente de implementar")
+        val descarga = _descargas.value[id] ?: return Job().apply { complete() }
+        return scope.launch {
+            progreso(pasos, retardoMs)
+                .comoEstados("/descargas/${descarga.nombre}")
+                .collect { estado -> cambiarEstado(id, estado) }
+        }
     }
 
     /** Flujo con el número de descargas en estado Descargando. Deriva de [descargas] con map. */
     fun activas(): Flow<Int> =
-        TODO("Pendiente de implementar")
+        descargas.map { mapa -> mapa.values.count { it.estado is EstadoDescarga.Descargando } }
 }
